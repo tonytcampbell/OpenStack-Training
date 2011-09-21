@@ -1,0 +1,40 @@
+#! /bin/bash
+
+################################################
+# Install packages and dependencies
+################################################
+sudo apt-get update
+sudo apt-get install -y --force-yes python-software-properties rabbitmq-server python-greenlet python-mysqldb euca2ools unzip bridge-utils
+sudo apt-get install -y --force-yes nova-common nova-doc python-nova nova-api nova-network nova-objectstore nova-scheduler nova-compute
+
+################################################
+# Set up user and project
+################################################
+nova-manage db sync
+nova-manage user admin testadmin
+nova-manage project create testproject testadmin
+
+################################################
+# Set up networking
+################################################
+brctl addbr br100
+ifconfig br100 up
+nova-manage network create --label=private --fixed_range_v4=10.0.0.0/24 --num_networks=1 --network_size=256 --bridge_interface=br100
+killall dnsmasq 
+service nova-network restart
+
+################################################
+# Set up user credentials
+################################################
+mkdir /root/creds
+/usr/bin/python /usr/bin/nova-manage project zipfile testproject testadmin /root/creds/novacreds.zip
+unzip /root/creds/novacreds.zip -d /root/creds/
+cat /root/creds/novarc >> ~/.bashrc
+source ~/.bashrc
+##### Script stopped on the source ########
+
+################################################
+# Allow ping and ssh for the instances
+################################################
+euca-authorize -P icmp -t -1:-1 default
+euca-authorize -P tcp -p 22 default
