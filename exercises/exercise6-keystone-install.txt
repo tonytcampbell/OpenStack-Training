@@ -1,0 +1,19 @@
+#! /bin/bash
+
+################################################
+# Install packages and dependencies
+################################################
+sudo apt-get install -y python-pip python-dev libxslt-dev sqlite libsqlite3-dev libldap2-dev libsasl2-dev python-lxml
+sudo apt-get -y --force-yes install keystone
+
+################################################
+# Fix up the Sample Data
+################################################
+#### ADD %tenant_id% TO V1.1 endpoints in /usr/share/pyshared/keystone/test/sampledata.py
+#### Fix up the Keystone conf 1) log_file=/var/log/keystone/keystone.log  2) sql_connection=sqlite:////var/lib/keystone/keystone.db
+
+################################################
+# Start server and warm up the Database
+################################################
+start keystone
+python /usr/share/pyshared/keystone/test/sampledata.py

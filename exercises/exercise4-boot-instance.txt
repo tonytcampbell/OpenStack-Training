@@ -1,0 +1,4 @@
+#! /bin/bash
+nova boot --flavor 1 --image 3 myFirstInstance
+nova list
+##ping the IP Address once the instance is active

@@ -1,0 +1,4 @@
+#! /bin/bash
+wget http://192.168.2.1/training/nova/maverick.tar.gz
+tar -xzvf maverick.tar.gz
+nova-manage image all_register --image=ami-maverick/image --kernel=aki-maverick/image --ram=ari-maverick/image --owner=testadmin --name=simpleImage --public=T 
